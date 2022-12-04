@@ -26,7 +26,7 @@ app.use((err, req, res, next) => {
     status = 500,
     message = "Server error :( Our work squirrels are doing their best to fix the issue...",
   } = err;
-  res.status(status).json({ message });
+  res.status(status).json({ status, message });
 });
 
 module.exports = app;
