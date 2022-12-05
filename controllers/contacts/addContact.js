@@ -2,10 +2,11 @@ const { Contact } = require("../../models/contact");
 const { HttpError } = require("../../helpers");
 
 const addContact = async (req, res) => {
+  const { _id: owner } = req.user;
   const email = req.body.email;
   const isPresent = await Contact.findOne({ email });
   if (isPresent === null) {
-    const result = await Contact.create(req.body);
+    const result = await Contact.create({ ...req.body, owner });
     res.status(201).json(result);
     return;
   }

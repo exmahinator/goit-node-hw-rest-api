@@ -5,7 +5,7 @@ const { User } = require("../../models/user");
 const { HttpError } = require("../../helpers");
 
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { email, password, subscription } = req.body;
   const user = await User.findOne({ email });
   if (user) {
     throw HttpError(
@@ -15,11 +15,15 @@ const register = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ name, email, password: hashPassword });
+  const newUser = await User.create({
+    email,
+    password: hashPassword,
+    subscription,
+  });
 
   res.status(201).json({
-    name: newUser.name,
     email: newUser.email,
+    subscription: newUser.subscription,
   });
 };
 
