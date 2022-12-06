@@ -17,7 +17,7 @@ const authenticate = async (req, res, next) => {
 
     const userIsValid = await User.findById(id);
 
-    if (!userIsValid) {
+    if (!userIsValid || !userIsValid.token) {
       throw new Error();
     }
     req.user = userIsValid;
