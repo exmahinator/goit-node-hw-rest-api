@@ -1,13 +1,20 @@
 const { Schema, model } = require("mongoose");
+const Joi = require("joi");
+const { handleSaveErrors } = require("../helpers");
 
-const contactSchema = Schema(
+const emailRegexp = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
+const contactScheme = new Schema(
   {
     name: {
       type: String,
-      required: [true, "Set name for contact"],
+      required: [true, "Please, set name for contact"],
     },
     email: {
       type: String,
+      match: emailRegexp,
+      unique: true,
+      required: true,
     },
     phone: {
       type: String,
@@ -16,10 +23,41 @@ const contactSchema = Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
   },
   { versionKey: false }
 );
 
-const Contact = model("contact", contactSchema);
+contactScheme.post("save", handleSaveErrors);
 
-module.exports = Contact;
+const addScheme = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().regex(emailRegexp).required(),
+  phone: Joi.string().required(),
+  favorite: Joi.boolean(),
+});
+
+const updateScheme = Joi.object({
+  name: Joi.string(),
+  email: Joi.string().regex(emailRegexp),
+  phone: Joi.string(),
+  favorite: Joi.boolean(),
+}).min(1);
+
+const updateFavScheme = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+
+const schemes = {
+  addScheme,
+  updateScheme,
+  updateFavScheme,
+};
+
+const Contact = model("contact", contactScheme);
+
+module.exports = { Contact, schemes };
