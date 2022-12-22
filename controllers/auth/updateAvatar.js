@@ -1,16 +1,25 @@
 const path = require("path");
 const fs = require("fs/promises");
-// const jimp = require("jimp");
+// const Jimp = require("jimp");
 
 const { User } = require("../../models/user");
-
+// const { minimizeAvatar } = require("../../helpers/minimizeAvatar");
 const avatarsDir = path.join(__dirname, "../../", "public", "avatars");
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
+  console.log("tempUpload:", tempUpload);
   console.log("originalname:", originalname);
-  //   jimp.read(originalname);
+
+  // minimizeAvatar(tempUpload, originalname);
+
+  // const image = await Jimp.read(tempUpload);
+  // image.resize(250, 250);
+  // image.writeAsync(`mini_${originalname}`);
+
+  // console.log("miniAvatar:", image);
+
   const filename = `${_id}_${originalname}`;
   const resultUpload = path.join(avatarsDir, filename);
   await fs.rename(tempUpload, resultUpload);
