@@ -26,6 +26,13 @@ const login = async (req, res) => {
     );
   }
 
+  if (!user.verify) {
+    throw HttpError(
+      401,
+      "Oh my, oh my... Email is not verified... We can't provide you access until it will not be verified. Please check your email for verification link, check your spam folder, because it may comes there or request new verification link!"
+    );
+  }
+
   const payload = {
     id: user._id,
   };
